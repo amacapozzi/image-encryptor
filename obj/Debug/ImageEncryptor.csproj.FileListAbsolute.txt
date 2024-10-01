@@ -1,0 +1,7 @@
+R:\Works\ImageEncryptor\ImageEncryptor\bin\Debug\ImageEncryptor.exe.config
+R:\Works\ImageEncryptor\ImageEncryptor\bin\Debug\ImageEncryptor.exe
+R:\Works\ImageEncryptor\ImageEncryptor\bin\Debug\ImageEncryptor.pdb
+R:\Works\ImageEncryptor\ImageEncryptor\obj\Debug\ImageEncryptor.csproj.AssemblyReference.cache
+R:\Works\ImageEncryptor\ImageEncryptor\obj\Debug\ImageEncryptor.csproj.CoreCompileInputs.cache
+R:\Works\ImageEncryptor\ImageEncryptor\obj\Debug\ImageEncryptor.exe
+R:\Works\ImageEncryptor\ImageEncryptor\obj\Debug\ImageEncryptor.pdb
