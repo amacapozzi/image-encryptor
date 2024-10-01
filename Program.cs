@@ -11,7 +11,7 @@ namespace ImageEncryptor
         {
             Console.WriteLine("Select an option:");
 
-            Console.WriteLine("[+] 1. Encrypt Image\n[+] 2. Decrypt Image");
+            Console.WriteLine("[+] 1. Encrypt Image\n[+] 2. Decrypt Image\n[+] 3. Decrypt image by name (saved in data.json)");
 
             ConsoleKeyInfo key = Console.ReadKey(true);
 
@@ -23,7 +23,11 @@ namespace ImageEncryptor
                 }
                 else if (key.Key == ConsoleKey.D2)
                 {
-                    DecryptImageAsync();
+                    DecryptImageAsync(false);
+                }
+                else if (key.Key == ConsoleKey.D3)
+                {
+                    DecryptImageAsync(true);
                 }
             }
         }
@@ -48,7 +52,10 @@ namespace ImageEncryptor
                 string encryptedImage = HashHelper.Encrypt(base64Image);
 
                 Console.WriteLine("Encrypted Image Data:");
-                Console.WriteLine(encryptedImage);
+
+                Config.SaveEncryptedImage(new Config.ConfigData(Path.GetFileName(imagePath), encryptedImage, new DateTime().ToLocalTime().ToString()));
+
+                Console.WriteLine("Image encrypted and saved in data.json");
             }
             catch (Exception ex)
             {
@@ -56,29 +63,53 @@ namespace ImageEncryptor
             }
         }
 
-        public static void DecryptImageAsync()
+        public static void DecryptImageAsync(bool storage)
         {
             try
             {
+                if (storage)
+                {
+                    DecryptLocalImage();
+                    Console.ReadKey();
+                    return;
+                }
+
                 Console.WriteLine("Please enter the encrypted image to decrypt:");
                 string encryptedImage = Console.ReadLine();
 
-                string decryptedBase64 = HashHelper.Decrypt(encryptedImage);
-                byte[] imgBytes = Convert.FromBase64String(decryptedBase64);
-
-                using (var ms = new MemoryStream(imgBytes))
-                {
-                    using (Bitmap bmp = new Bitmap(ms))
-                    {
-                        string outputFileName = "decrypted.png";
-                        bmp.Save(outputFileName);
-                        Console.WriteLine($"Image decrypted and saved as {outputFileName}");
-                    }
-                }
+                DecryptImage(encryptedImage);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to decrypt image: {ex.Message}");
+            }
+        }
+
+        public static void DecryptImage(string encryptedImage)
+        {
+            string decryptedBase64 = HashHelper.Decrypt(encryptedImage);
+            byte[] imgBytes = Convert.FromBase64String(decryptedBase64);
+
+            using (var ms = new MemoryStream(imgBytes))
+            {
+                using (Bitmap bmp = new Bitmap(ms))
+                {
+                    string outputFileName = "decrypted.png";
+                    bmp.Save(outputFileName);
+                    Console.WriteLine($"Image decrypted and saved as {outputFileName}");
+                }
+            }
+        }
+
+        public static void DecryptLocalImage()
+        {
+            Console.WriteLine("Please enter image name:");
+            string imageName = Console.ReadLine();
+            Config.ConfigData configData = Config.FindDataByName(imageName);
+
+            if (configData != null)
+            {
+                DecryptImage(configData.encryptedImage);
             }
         }
 
